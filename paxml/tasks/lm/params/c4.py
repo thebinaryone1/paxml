@@ -931,3 +931,22 @@ class C4SpmdPipelineGpt3SmallAdam64Replicas(C4SpmdPipelineGpt3AdamOrgHP):
   EVAL_INTERVAL_STEPS = 100
   SUMMARY_INTERVAL_STEPS = 1
   CHECKPOINT_EVERY_N_STEPS = 200
+
+@experiment_registry.register
+class C4Spmd1024BAdam3072Replicas(C4SpmdAdam):
+  r"""GPT-3 config with 1024B params. Model Parameters:
+  Global batch size = 1 * 256 * 12 * 1 = 3072"""
+  NUM_LAYERS = 142
+  MODEL_DIMS = 24576
+  HIDDEN_DIMS = MODEL_DIMS * 4
+  NUM_HEADS = 192
+  DIMS_PER_HEAD = 128
+  PERCORE_BATCH_SIZE = 1
+  MAX_SEQ_LEN = 1024
+  VOCAB_SIZE = 32000
+  FPROP_DTYPE = jnp.bfloat16
+  USE_REPEATED_LAYER = True
+
+  SUMMARY_INTERVAL_STEPS = 10
+  CHECKPOINT_POLICY = layers.AutodiffCheckpointType.SAVE_NOTHING
+  ICI_MESH_SHAPE = [1, 256, 12]
